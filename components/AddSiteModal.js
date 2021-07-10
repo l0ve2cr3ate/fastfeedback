@@ -14,6 +14,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
+import { mutate } from "swr";
 
 import { useAuth } from "@/lib/auth";
 import { createSite } from "@/lib/db";
@@ -25,12 +26,14 @@ const AddSiteModal = ({ children }) => {
   const toast = useToast();
 
   const onCreateSite = ({ name, url }) => {
-    createSite({
+    const newSite = {
       authorId: auth.user.uid,
       createdAt: new Date().toISOString(),
       name,
       url,
-    });
+    };
+
+    const { id } = createSite(newSite);
     toast({
       title: "Success!",
       description: "We have added your site.",
@@ -38,6 +41,13 @@ const AddSiteModal = ({ children }) => {
       duration: 5000,
       isClosable: true,
     });
+    mutate(
+      "/api/sites/",
+      async (data) => ({
+        sites: [{ id, ...newSite }, ...data.sites],
+      }),
+      false
+    );
     onClose();
   };
 
