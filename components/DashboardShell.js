@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useAuth } from "@/lib/auth";
 import Logo from "@/icons/logo";
+import AddSiteModal from "./AddSiteModal";
 
 const DashboardShell = ({ children }) => {
   const { user } = useAuth();
@@ -68,6 +69,7 @@ const DashboardShell = ({ children }) => {
           </Breadcrumb>
           <Flex justifyContent="space-between">
             <Heading mb={8}>My Sites</Heading>
+            <AddSiteModal>Add Site</AddSiteModal>
           </Flex>
         </Box>
 
