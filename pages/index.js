@@ -2,15 +2,33 @@ import { Button, Text, Flex, Link, Box } from "@chakra-ui/react";
 import Head from "next/head";
 import { useAuth } from "@/lib/auth";
 import Logo from "@/icons/logo";
+import GoogleIcon from "@/icons/google";
+import GithubIcon from "@/icons/github";
 
 export default function Home() {
   const auth = useAuth();
 
   return (
     <Box height="100vh" bg="gray.100" py={16} px={4}>
-      <Flex as="main" direction="column" maxW="700px" margin="0 auto">
+      <Flex
+        as="main"
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        maxW="700px"
+        margin="0 auto"
+        height="100%"
+      >
         <Head>
-          <title>Fast Feedback</title>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              if (document.cookie && document.cookie.includes('fast-feedback-auth')) {
+                window.location.href = "/dashboard"
+              }
+            `,
+            }}
+          />
         </Head>
 
         <Logo color="black" boxSize="64px" />
@@ -31,16 +49,56 @@ export default function Home() {
         </Text>
 
         {auth?.user ? (
-          <Button onClick={() => auth.signout()}>Sign Out</Button>
-        ) : (
           <Button
+            as="a"
+            href="/dashboard"
+            backgroundColor="gray.900"
+            color="white"
+            fontWeight="medium"
             mt={4}
-            variant="link"
-            size="sm"
-            onClick={() => auth.signinWithGithub()}
+            maxW="200px"
+            _hover={{ bg: "gray.700" }}
+            _active={{
+              bg: "gray.800",
+              transform: "scale(0.95)",
+            }}
           >
-            Sign In
+            View Dashboard
           </Button>
+        ) : (
+          <>
+            <Button
+              leftIcon={<GithubIcon />}
+              onClick={() => auth.signinWithGithub()}
+              backgroundColor="gray.900"
+              color="white"
+              fontWeight="medium"
+              mt={4}
+              _hover={{ bg: "gray.700" }}
+              _active={{
+                bg: "gray.800",
+                transform: "scale(0.95)",
+              }}
+            >
+              Continue with GitHub
+            </Button>
+            <Button
+              leftIcon={<GoogleIcon />}
+              onClick={() => auth.signinWithGoogle()}
+              backgroundColor="white"
+              color="gray.900"
+              variant="outline"
+              fontWeight="medium"
+              mt={4}
+              _hover={{ bg: "gray.100" }}
+              _active={{
+                bg: "gray.100",
+                transform: "scale(0.95)",
+              }}
+            >
+              Continue with Google
+            </Button>
+          </>
         )}
       </Flex>
     </Box>
