@@ -11,7 +11,6 @@ const MyFeedback = () => {
   const { user } = useAuth();
   const { data } = useSWR(user ? ["/api/feedback", user.token] : null, fetcher);
 
-  console.log({ data });
 
   if (!data) {
     return (
