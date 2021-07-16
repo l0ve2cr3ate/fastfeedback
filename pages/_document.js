@@ -5,7 +5,15 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <link rel="icon" href="/favicon.ico" />
+          <meta content="IE=edge" httpEquiv="X-UA-Compatible" />
+          <meta content="#ffffff" name="theme-color" />
+          <meta content="#ffffff" name="msapplication-TileColor" />
+          <meta
+            content="/favicons/browserconfig.xml"
+            name="msapplication-config"
+          />
+          <link href="/favicons/favicon.ico" rel="shortcut icon" />
+          <link href="/favicons/site.webmanifest" rel="manifest" />
           <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
             rel="stylesheet"

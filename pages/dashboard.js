@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import fetcher from "@/utils/fetcher";
 import SiteTable from "@/components/SiteTable";
 import SiteTableHeader from "@/components/SiteTableHeader";
+import Page from "@/components/Page";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -28,4 +29,12 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+const DashboardPage = () => (
+  <Page name="Dashboard" path="/dashboard">
+    <Dashboard />
+  </Page>
+);
+
+export default DashboardPage;
+
+
