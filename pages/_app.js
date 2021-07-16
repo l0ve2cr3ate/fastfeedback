@@ -1,12 +1,16 @@
+import { css, Global } from "@emotion/react";
+import { DefaultSeo } from "next-seo";
+
 import { ThemeProvider, CSSReset } from "@chakra-ui/react";
 import { AuthProvider } from "@/lib/auth";
 import theme from "@/styles/theme";
-import { css, Global } from "@emotion/react";
+import SEO from "../next-seo.config";
 
 const GlobalStyle = ({ children }) => {
   return (
     <>
       <CSSReset />
+      <DefaultSeo {...SEO} />
       <Global
         styles={css`
           html {

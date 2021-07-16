@@ -1,11 +1,11 @@
 import React from "react";
 import NextLink from "next/link";
-import { Box, Flex, Link, Avatar, Button } from "@chakra-ui/react";
+import { Box, Flex, Link, Avatar } from "@chakra-ui/react";
 import { useAuth } from "@/lib/auth";
 import Logo from "@/icons/logo";
 
 const DashboardShell = ({ children }) => {
-  const auth = useAuth();
+  const { user } = useAuth();
 
   return (
     <Box backgroundColor="gray.100" h="100vh">
@@ -40,20 +40,9 @@ const DashboardShell = ({ children }) => {
             </NextLink>
           </Flex>
           <Flex justifyContent="center" alignItems="center">
-            {auth?.user && (
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  console.log("sign out");
-                  auth.signout();
-                }}
-              >
-                Sign Out
-              </Button>
-            )}
             <NextLink href="/account" passHref>
               <Link>
-                <Avatar size="sm" src={auth?.user?.photoUrl} />
+                <Avatar size="sm" src={user?.photoUrl} />
               </Link>
             </NextLink>
           </Flex>
