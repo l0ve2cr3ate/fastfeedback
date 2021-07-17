@@ -21,20 +21,27 @@ const Dashboard = () => {
     );
   }
 
+  if (data.sites?.length) {
+    return (
+      <DashboardShell>
+        <SiteTableHeader />
+        <SiteTable sites={data.sites} />
+      </DashboardShell>
+    );
+  }
+
   return (
     <DashboardShell>
       <SiteTableHeader />
-      {data?.sites ? <SiteTable sites={data.sites} /> : <EmptyState />}
+      <EmptyState />
     </DashboardShell>
   );
 };
 
 const DashboardPage = () => (
-  <Page name="Dashboard" path="/dashboard">
+  <Page name="Dashboard" path="/sites">
     <Dashboard />
   </Page>
 );
 
 export default DashboardPage;
-
-

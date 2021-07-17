@@ -19,7 +19,7 @@ export default function FeedbackLink({ siteId }) {
         color={linkColor.light}
         fontWeight="bold"
         fontSize="sm"
-        href={`/p/${siteId}`}
+        href={`/site/${siteId}`}
         target="_blank"
       >
         Leave a comment →

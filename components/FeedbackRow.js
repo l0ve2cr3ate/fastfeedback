@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Code, Switch } from "@chakra-ui/react";
 import { mutate } from "swr";
 
 import { Td } from "./Table";
-import { useAuth } from "@/lib/auth";
+import RemoveButton from "./RemoveButton";
 import { updateFeedback } from "@/lib/db";
-// import DeleteFeedbackButton from "./DeleteFeedbackButton";
+import { useAuth } from "@/lib/auth";
 
 const FeedbackRow = ({ id, author, text, route, status }) => {
   const auth = useAuth();
@@ -17,24 +17,22 @@ const FeedbackRow = ({ id, author, text, route, status }) => {
   };
 
   return (
-    <Box as="tr" key={id}>
-      <Td fontWeight="medium">{author}</Td>
+    <Box as="tr">
+      <Td>{author}</Td>
       <Td>{text}</Td>
       <Td>
-        <Code
-          maxW="150px"
-          textOverflow="ellipsis"
-          whiteSpace="nowrap"
-          overflow="hidden"
-          display="inherit"
-        >
-          {route || "/"}
-        </Code>
+        <Code>{route || "/"}</Code>
       </Td>
       <Td>
-        <Switch color="green" onChange={toggleFeedback} isChecked={isChecked} />
+        <Switch
+          onChange={toggleFeedback}
+          colorScheme="green"
+          isChecked={isChecked}
+        />
       </Td>
-      <Td>{/* <DeleteFeedbackButton feedbackId={id} /> */}</Td>
+      <Td>
+        <RemoveButton feedbackId={id} />
+      </Td>
     </Box>
   );
 };
