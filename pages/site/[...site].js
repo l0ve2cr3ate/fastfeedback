@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   Box,
   Button,
@@ -7,73 +7,61 @@ import {
   FormLabel,
   Textarea,
 } from "@chakra-ui/react";
+import useSWR, { mutate } from "swr";
 
 import Feedback from "@/components/Feedback";
 import { useAuth } from "@/lib/auth";
-import { getAllFeedback, getAllSites, getSite } from "@/lib/db-admin";
 import { createFeedback } from "@/lib/db";
 import DashboardShell from "@/components/DashboardShell";
 import SiteHeader from "@/components/SiteHeader";
+import fetcher from "@/utils/fetcher";
 
-export const getStaticProps = async (context) => {
-  const [siteId] = context.params.site;
-  const { feedback } = await getAllFeedback(siteId);
-  const { site } = await getSite(siteId);
-
-  return {
-    props: {
-      initialFeedback: feedback,
-      site,
-    },
-    revalidate: 1,
-  };
-};
-
-export const getStaticPaths = async () => {
-  const { sites } = await getAllSites();
-  const paths = sites.map((site) => ({
-    params: {
-      site: [site.id.toString()],
-    },
-  }));
-  return {
-    paths,
-    fallback: true,
-  };
-};
-
-const SiteFeedback = ({ initialFeedback }) => {
+const SiteFeedback = () => {
   const { user } = useAuth();
   const router = useRouter();
   const inputEl = useRef(null);
-  const [allFeedback, setAllFeedback] = useState(initialFeedback);
-  const [siteId, route] = router.query.site;
 
-  useEffect(() => {
-    setAllFeedback(initialFeedback);
-  }, [initialFeedback]);
+  const siteAndRoute = router.query?.site;
+  const siteId = siteAndRoute ? siteAndRoute[0] : null;
+  const route = siteAndRoute ? siteAndRoute[1] : null;
+  const feedbackApi = route
+    ? `/api/feedback/${siteId}/${route}`
+    : `/api/feedback/${siteId}`;
+
+  const { data: siteData } = useSWR(`/api/site/${siteId}`, fetcher);
+  const { data: feedbackData } = useSWR(feedbackApi, fetcher);
+
+  const site = siteData?.site;
+  const allFeedback = feedbackData?.feedback;
 
   const onSubmit = (event) => {
     event.preventDefault();
 
     const newFeedback = {
-      author: user.name,
-      route: route || "/",
-      authorId: user.uid,
       siteId,
-      text: inputEl.current.value,
+      siteAuthorId: site.authorId,
+      route: route || "/",
+      author: user.name,
+      authorId: user.uid,
+      text: inputEl.current.value.replace("\n", "\n\n"),
       createdAt: new Date().toISOString(),
       provider: user.provider,
       status: "pending",
     };
 
     inputEl.current.value = "";
-    setAllFeedback([newFeedback, ...allFeedback]);
     createFeedback(newFeedback);
+    mutate(
+      feedbackApi,
+      async (data) => ({
+        feedback: [newFeedback, ...data.feedback],
+      }),
+      false
+    );
   };
   return (
     <DashboardShell>
-      <SiteHeader isSiteOwner={true} siteName={"test"} siteId={siteId} />
+      <SiteHeader isSiteOwner={true} siteName={site?.name} siteId={siteId} />
       <Box
         display="flex"
         flexDirection="column"
