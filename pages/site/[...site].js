@@ -1,20 +1,29 @@
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
-import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Textarea,
+} from "@chakra-ui/react";
 
 import Feedback from "@/components/Feedback";
 import { useAuth } from "@/lib/auth";
-import { getAllFeedback, getAllSites } from "@/lib/db-admin";
+import { getAllFeedback, getAllSites, getSite } from "@/lib/db-admin";
 import { createFeedback } from "@/lib/db";
 import DashboardShell from "@/components/DashboardShell";
+import SiteHeader from "@/components/SiteHeader";
 
 export const getStaticProps = async (context) => {
-  const siteId = context.params.siteId;
+  const [siteId] = context.params.site;
   const { feedback } = await getAllFeedback(siteId);
+  const { site } = await getSite(siteId);
 
   return {
     props: {
       initialFeedback: feedback,
+      site,
     },
     revalidate: 1,
   };
@@ -24,7 +33,7 @@ export const getStaticPaths = async () => {
   const { sites } = await getAllSites();
   const paths = sites.map((site) => ({
     params: {
-      siteId: site.id.toString(),
+      site: [site.id.toString()],
     },
   }));
   return {
@@ -34,21 +43,27 @@ export const getStaticPaths = async () => {
 };
 
 const SiteFeedback = ({ initialFeedback }) => {
-  const auth = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const inputEl = useRef(null);
   const [allFeedback, setAllFeedback] = useState(initialFeedback);
+  const [siteId, route] = router.query.site;
+
+  useEffect(() => {
+    setAllFeedback(initialFeedback);
+  }, [initialFeedback]);
 
   const onSubmit = (event) => {
     event.preventDefault();
 
     const newFeedback = {
-      author: auth.user.name,
-      authorId: auth.user.uid,
-      siteId: router.query.siteId,
+      author: user.name,
+      route: route || "/",
+      authorId: user.uid,
+      siteId,
       text: inputEl.current.value,
       createdAt: new Date().toISOString(),
-      provider: auth.user.provider,
+      provider: user.provider,
       status: "pending",
     };
 
@@ -58,6 +73,7 @@ const SiteFeedback = ({ initialFeedback }) => {
   };
   return (
     <DashboardShell>
+      <SiteHeader isSiteOwner={true} siteName={"test"} siteId={siteId} />
       <Box
         display="flex"
         flexDirection="column"
@@ -67,21 +83,29 @@ const SiteFeedback = ({ initialFeedback }) => {
       >
         <Box as="form" onSubmit={onSubmit}>
           <FormControl id="comment-control" my={8}>
-            <FormLabel htmlFor="comment">Comment</FormLabel>
-            <Input
+            <FormLabel mb={8} htmlFor="comment">
+              Comment
+            </FormLabel>
+            <Textarea
               ref={inputEl}
-              placeholder="Add your feedback..."
-              type="text"
               id="comment"
-              background="white"
+              placeholder="Leave a comment"
+              isDisabled={!user}
+              h="100px"
+              backgroundColor="white"
             />
+
             <Button mt={2} fontWeight="medium" type="submit">
               Add comment
             </Button>
           </FormControl>
         </Box>
-        {allFeedback?.map((feedback) => (
-          <Feedback key={feedback.id} {...feedback} />
+        {allFeedback?.map((feedback, index) => (
+          <Feedback
+            key={feedback.id}
+            isLast={index === allFeedback.length - 1}
+            {...feedback}
+          />
         ))}
       </Box>
     </DashboardShell>
