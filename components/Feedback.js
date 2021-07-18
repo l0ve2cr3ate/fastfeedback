@@ -1,19 +1,10 @@
 import React from "react";
-import {
-  Box,
-  Heading,
-  Text,
-  Divider,
-  Icon,
-  Flex,
-  Code,
-} from "@chakra-ui/react";
+import { Box, Heading, Text, Divider, Flex } from "@chakra-ui/react";
 import { format, parseISO } from "date-fns";
-import ReactMarkdown from "react-markdown";
+import GoogleIcon from "@/icons/google";
+import GithubIcon from "@/icons/github";
 
-import MDXComponents from "./MDXComponents";
-
-const Feedback = ({ author, text, createdAt, provider }) => {
+const Feedback = ({ author, text, createdAt, provider, isLast }) => {
   const authorColor = {
     light: "gray.900",
     dark: "gray.200",
@@ -33,33 +24,23 @@ const Feedback = ({ author, text, createdAt, provider }) => {
         <Heading size="sm" as="h3" mb={0} fontWeight="medium">
           {author}
         </Heading>
-        <Text>{text}</Text>
-        <Text>{format(parseISO(createdAt), "ppPP")}</Text>
+        {provider.includes("google") ? (
+          <GoogleIcon ml={3} />
+        ) : (
+          <GithubIcon ml={3} />
+        )}
       </Flex>
-
-      <Box>
-        {/* <ReactMarkdown
-          source={text}
-          renderers={{
-            paragraph: MDXComponents.p,
-            blockquote: MDXComponents.blockquote,
-            link: MDXComponents.a,
-            list: MDXComponents.ul,
-            listItem: MDXComponents.li,
-            table: MDXComponents.table,
-            tableHead: MDXComponents.th,
-            tableCell: MDXComponents.td,
-            code: ({ value }) => (
-              <pre>
-                <Code borderRadius={8} p={4} my={4}>
-                  {value}
-                </Code>
-              </pre>
-            ),
-            inlineCode: MDXComponents.inlineCode,
-          }}
-        /> */}
-      </Box>
+      <Text color="gray.500" mb={4} fontSize="xs">
+        {format(parseISO(createdAt), "ppPP")}
+      </Text>
+      <Text color={textColor.light}>{text}</Text>
+      {!isLast && (
+        <Divider
+          borderColor={dividerColor.light}
+          backgroundColor={dividerColor.light}
+          my={6}
+        />
+      )}
     </Box>
   );
 };

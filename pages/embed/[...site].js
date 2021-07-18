@@ -4,16 +4,18 @@ import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 
 import Feedback from "@/components/Feedback";
 import { useAuth } from "@/lib/auth";
-import { getAllFeedback, getAllSites } from "@/lib/db-admin";
+import { getAllFeedback, getAllSites, getSite } from "@/lib/db-admin";
 import { createFeedback } from "@/lib/db";
 
 export const getStaticProps = async (context) => {
-  const siteId = context.params.siteId;
-  const { feedback } = await getAllFeedback(siteId);
+  const [siteId, route] = context.params.site;
+  const { feedback } = await getAllFeedback(siteId, route);
+  const { site } = await getSite(siteId);
 
   return {
     props: {
       initialFeedback: feedback,
+      site,
     },
     revalidate: 1,
   };
@@ -21,9 +23,10 @@ export const getStaticProps = async (context) => {
 
 export const getStaticPaths = async () => {
   const { sites } = await getAllSites();
+
   const paths = sites.map((site) => ({
     params: {
-      siteId: site.id.toString(),
+      site: [site.id.toString()],
     },
   }));
   return {
@@ -66,8 +69,12 @@ const SiteFeedback = ({ initialFeedback }) => {
           </Button>
         </FormControl>
       </Box>
-      {allFeedback?.map((feedback) => (
-        <Feedback key={feedback.id} {...feedback} />
+      {allFeedback?.map((feedback, index) => (
+        <Feedback
+          key={feedback.id}
+          isLast={index === initialFeedback.length - 1}
+          {...feedback}
+        />
       ))}
     </Box>
   );
