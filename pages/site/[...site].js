@@ -28,76 +28,78 @@ const SiteFeedback = () => {
     ? `/api/feedback/${siteId}/${route}`
     : `/api/feedback/${siteId}`;
 
-  const { data: siteData } = useSWR(`/api/site/${siteId}`, fetcher);
-  const { data: feedbackData } = useSWR(feedbackApi, fetcher);
 
-  const site = siteData?.site;
-  const allFeedback = feedbackData?.feedback;
+    const { data: siteData } = useSWR(`/api/site/${siteId}`, fetcher);
+    const { data: feedbackData } = useSWR(feedbackApi, fetcher);
 
-  const onSubmit = (event) => {
-    event.preventDefault();
+    const site = siteData?.site;
+    const allFeedback = feedbackData?.feedback;
 
-    const newFeedback = {
-      siteId,
-      siteAuthorId: site.authorId,
-      route: route || "/",
-      author: user.name,
-      authorId: user.uid,
-      text: inputEl.current.value.replace("\n", "\n\n"),
-      createdAt: new Date().toISOString(),
-      provider: user.provider,
-      status: "pending",
+    const onSubmit = (event) => {
+      event.preventDefault();
+
+      const newFeedback = {
+        siteId,
+        siteAuthorId: site.authorId,
+        route: route || "/",
+        author: user.name,
+        authorId: user.uid,
+        text: inputEl.current.value.replace("\n", "\n\n"),
+        createdAt: new Date().toISOString(),
+        provider: user.provider,
+        status: "pending",
+      };
+
+      inputEl.current.value = "";
+      createFeedback(newFeedback);
+      mutate(
+        feedbackApi,
+        async (data) => ({
+          feedback: [newFeedback, ...data.feedback],
+        }),
+        false
+      );
     };
+    return (
+      <DashboardShell>
+        <SiteHeader isSiteOwner={true} site={site} siteId={siteId} />
+        <Box
+          display="flex"
+          flexDirection="column"
+          width="full"
+          maxWidth="760px"
+          margin="0 auto"
+        >
+          <Box as="form" onSubmit={onSubmit}>
+            <FormControl id="comment-control" my={8}>
+              <FormLabel mb={8} htmlFor="comment">
+                Comment
+              </FormLabel>
+              <Textarea
+                ref={inputEl}
+                id="comment"
+                placeholder="Leave a comment"
+                isDisabled={!user}
+                h="100px"
+                backgroundColor="white"
+              />
 
-    inputEl.current.value = "";
-    createFeedback(newFeedback);
-    mutate(
-      feedbackApi,
-      async (data) => ({
-        feedback: [newFeedback, ...data.feedback],
-      }),
-      false
-    );
-  };
-  return (
-    <DashboardShell>
-      <SiteHeader isSiteOwner={true} siteName={site?.name} siteId={siteId} />
-      <Box
-        display="flex"
-        flexDirection="column"
-        width="full"
-        maxWidth="760px"
-        margin="0 auto"
-      >
-        <Box as="form" onSubmit={onSubmit}>
-          <FormControl id="comment-control" my={8}>
-            <FormLabel mb={8} htmlFor="comment">
-              Comment
-            </FormLabel>
-            <Textarea
-              ref={inputEl}
-              id="comment"
-              placeholder="Leave a comment"
-              isDisabled={!user}
-              h="100px"
-              backgroundColor="white"
+              <Button mt={2} fontWeight="medium" type="submit">
+                Add comment
+              </Button>
+            </FormControl>
+          </Box>
+          {allFeedback?.map((feedback, index) => (
+            <Feedback
+              key={feedback.id}
+              settings={site?.settings}
+              isLast={index === allFeedback.length - 1}
+              {...feedback}
             />
-
-            <Button mt={2} fontWeight="medium" type="submit">
-              Add comment
-            </Button>
-          </FormControl>
+          ))}
         </Box>
-        {allFeedback?.map((feedback, index) => (
-          <Feedback
-            key={feedback.id}
-            isLast={index === allFeedback.length - 1}
-            {...feedback}
-          />
-        ))}
-      </Box>
-    </DashboardShell>
-  );
+      </DashboardShell>
+    );
 };
 
 export default SiteFeedback;

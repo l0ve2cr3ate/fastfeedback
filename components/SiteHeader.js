@@ -11,7 +11,9 @@ import {
 
 import EditSiteModal from "./EditSiteModal";
 
-const SiteHeader = ({ isSiteOwner, siteName, siteId, route }) => {
+const SiteHeader = ({ isSiteOwner, site, siteId, route }) => {
+  const siteName = site?.name;
+
   return (
     <Box mx={4}>
       <Breadcrumb>
@@ -36,7 +38,9 @@ const SiteHeader = ({ isSiteOwner, siteName, siteId, route }) => {
       <Flex justifyContent="space-between">
         <Heading mb={8}>{siteName || "-"}</Heading>
         {isSiteOwner && (
-          <EditSiteModal siteId={siteId}>Edit Site</EditSiteModal>
+          <EditSiteModal settings={site?.settings} siteId={siteId}>
+            Edit Site
+          </EditSiteModal>
         )}
       </Flex>
     </Box>
