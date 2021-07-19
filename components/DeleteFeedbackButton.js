@@ -7,6 +7,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
+  IconButton,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { mutate } from "swr";
@@ -14,7 +15,7 @@ import { mutate } from "swr";
 import { deleteFeedback } from "@/lib/db";
 import { useAuth } from "@/lib/auth";
 
-const RemoveButton = ({ feedbackId }) => {
+const DeleteFeedbackButton = ({ feedbackId }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const cancelRef = React.useRef();
   const auth = useAuth();
@@ -38,7 +39,12 @@ const RemoveButton = ({ feedbackId }) => {
 
   return (
     <>
-      <DeleteIcon onClick={() => setIsOpen(true)} />
+      <IconButton
+        icon={<DeleteIcon />}
+        variant="ghost"
+        aria-label="delete feedback"
+        onClick={() => setIsOpen(true)}
+      />
 
       <AlertDialog
         isOpen={isOpen}
@@ -48,7 +54,7 @@ const RemoveButton = ({ feedbackId }) => {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Customer
+              Delete Feedback
             </AlertDialogHeader>
 
             <AlertDialogBody>
@@ -59,7 +65,12 @@ const RemoveButton = ({ feedbackId }) => {
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={onDelete} ml={3}>
+              <Button
+                fontWeight="bold"
+                colorScheme="red"
+                onClick={onDelete}
+                ml={3}
+              >
                 Delete
               </Button>
             </AlertDialogFooter>
@@ -70,4 +81,4 @@ const RemoveButton = ({ feedbackId }) => {
   );
 };
 
-export default RemoveButton;
+export default DeleteFeedbackButton;

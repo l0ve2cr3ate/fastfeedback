@@ -4,7 +4,7 @@ import { format, parseISO } from "date-fns";
 import GoogleIcon from "@/icons/google";
 import GithubIcon from "@/icons/github";
 
-const Feedback = ({ author, text, createdAt, provider, isLast }) => {
+const Feedback = ({ author, text, createdAt, provider, isLast, settings }) => {
   const authorColor = {
     light: "gray.900",
     dark: "gray.200",
@@ -24,15 +24,19 @@ const Feedback = ({ author, text, createdAt, provider, isLast }) => {
         <Heading size="sm" as="h3" mb={0} fontWeight="medium">
           {author}
         </Heading>
-        {provider.includes("google") ? (
+
+        {settings?.icons && provider.includes("google") ? (
           <GoogleIcon ml={3} />
-        ) : (
+        ) : settings?.icons && provider.includes("github") ? (
           <GithubIcon ml={3} />
-        )}
+        ) : null}
       </Flex>
-      <Text color="gray.500" mb={4} fontSize="xs">
-        {format(parseISO(createdAt), "ppPP")}
-      </Text>
+      {settings?.timestamp && (
+        <Text color="gray.500" mb={4} fontSize="xs">
+          {format(parseISO(createdAt), "ppPP")}
+        </Text>
+      )}
+
       <Text color={textColor.light}>{text}</Text>
       {!isLast && (
         <Divider

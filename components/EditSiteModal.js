@@ -14,45 +14,29 @@ import {
   Switch,
 } from "@chakra-ui/react";
 import { SettingsIcon } from "@chakra-ui/icons";
-
-import { useForm, Controller } from "react-hook-form";
+import { mutate } from "swr";
+import { useForm } from "react-hook-form";
 
 import { useAuth } from "@/lib/auth";
+import { updateSite } from "@/lib/db";
 
-import { mutate } from "swr";
-
-const EditeSiteModal = ({ children }) => {
+const EditeSiteModal = ({ children, siteId, settings }) => {
   const auth = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { handleSubmit, control, register } = useForm();
+  const { handleSubmit, register } = useForm();
   const toast = useToast();
 
-  const onEditSite = (props) => {
-    console.log({ props });
+  const onEditSite = async (newSettings) => {
+    await updateSite(siteId, { settings: newSettings });
 
-    // const newSite = {
-    //   authorId: auth.user.uid,
-    //   createdAt: new Date().toISOString(),
-    //   name,
-    //   url,
-    // };
-
-    // const { id } = createSite(newSite);
-
-    // toast({
-    //   title: "Success!",
-    //   description: "We have added your site.",
-    //   status: "success",
-    //   duration: 5000,
-    //   isClosable: true,
-    // });
-    // mutate(
-    //   ["/api/sites", auth.user.token],
-    //   async (data) => ({
-    //     sites: [{ id, ...newSite }, ...data.sites],
-    //   }),
-    //   false
-    // );
+    toast({
+      title: "Success!",
+      description: "We have updated your site.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+    mutate(`/api/site/${siteId}`);
     onClose();
   };
 
@@ -85,22 +69,9 @@ const EditeSiteModal = ({ children }) => {
                 mt={1}
                 id="show-timestamp"
                 colorScheme="green"
+                defaultIsChecked={settings?.timestamp}
                 {...register("timestamp")}
               />
-              {/* <Controller
-                name="timestamp"
-                control={control}
-                render={({ fields }) => (
-                  <Switch
-                    key="show-timestamp"
-                    mt={1}
-                    id="show-timestamp"
-                    colorScheme="green"
-                    defaultChecked={false}
-                    {...fields}
-                  />
-                )}
-              /> */}
 
               <FormLabel ml={2} htmlFor="show-timestamp">
                 Show Timestamp
@@ -109,14 +80,15 @@ const EditeSiteModal = ({ children }) => {
 
             <FormControl display="flex">
               <Switch
-                name="icon"
+                name="icons"
                 mt={1}
-                id="show-icon"
+                id="show-icons"
                 colorScheme="green"
-                {...register("icon")}
+                defaultIsChecked={settings?.icons}
+                {...register("icons")}
               />
 
-              <FormLabel ml={2} htmlFor="show-icon">
+              <FormLabel ml={2} htmlFor="show-icons">
                 Show Icon
               </FormLabel>
             </FormControl>
@@ -127,6 +99,7 @@ const EditeSiteModal = ({ children }) => {
                 mt={1}
                 id="show-ratings"
                 colorScheme="green"
+                defaultIsChecked={settings?.ratings}
                 {...register("ratings")}
               />
 
