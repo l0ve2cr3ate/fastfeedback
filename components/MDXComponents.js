@@ -1,7 +1,7 @@
-/** @jsxImportSource @emotion/react */
+/** @jsxRuntime classic /
+/** @jsx jsx */
 import {
   Box,
-  Callout,
   Code,
   Heading,
   Kbd,
@@ -10,8 +10,9 @@ import {
   Text,
   Divider,
   useColorMode,
+  Alert,
 } from "@chakra-ui/react";
-
+import { jsx } from "@emotion/react";
 import NextLink from "next/link";
 
 const Table = (props) => (
@@ -21,12 +22,22 @@ const Table = (props) => (
 );
 
 const THead = (props) => {
+  const { colorMode } = useColorMode();
   const bg = {
     light: "gray.50",
     dark: "whiteAlpha.100",
   };
 
-  return <Box as="th" fontWeight="semibold" p={2} fontSize="sm" {...props} />;
+  return (
+    <Box
+      as="th"
+      bg={bg[colorMode]}
+      fontWeight="semibold"
+      p={2}
+      fontSize="sm"
+      {...props}
+    />
+  );
 };
 
 const TData = (props) => (
@@ -42,6 +53,7 @@ const TData = (props) => (
 );
 
 const CustomLink = (props) => {
+  const { colorMode } = useColorMode();
   const color = {
     light: "hsl(208, 99%, 44%)",
     dark: "hsl(208, 95%, 68%)",
@@ -53,24 +65,26 @@ const CustomLink = (props) => {
   if (isInternalLink) {
     return (
       <NextLink href={href} passHref>
-        <Link {...props} />
+        <Link color={color[colorMode]} {...props} />
       </NextLink>
     );
   }
 
-  return <Link isExternal {...props} />;
+  return <Link color={color[colorMode]} isExternal {...props} />;
 };
 
 const Quote = (props) => {
+  const { colorMode } = useColorMode();
   const bgColor = {
     light: "blue.50",
     dark: "blue.900",
   };
 
   return (
-    <Callout
+    <Alert
       mt={4}
       w="98%"
+      bg={bgColor[colorMode]}
       variant="left-accent"
       status="info"
       css={{
@@ -130,12 +144,13 @@ const DocsHeading = (props) => (
 );
 
 const Hr = () => {
+  const { colorMode } = useColorMode();
   const borderColor = {
     light: "gray.200",
     dark: "gray.600",
   };
 
-  return <Divider my={4} w="100%" />;
+  return <Divider borderColor={borderColor[colorMode]} my={4} w="100%" />;
 };
 
 const MDXComponents = {

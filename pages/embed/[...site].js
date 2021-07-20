@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
-import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 import Feedback from "@/components/Feedback";
-import { useAuth } from "@/lib/auth";
 import { getAllFeedback, getAllSites, getSite } from "@/lib/db-admin";
-import { createFeedback } from "@/lib/db";
+import { useTheme } from "@/utils/useTheme";
+import FeedbackLink from "@/components/FeedbackLink";
 
 export const getStaticProps = async (context) => {
   const [siteId, route] = context.params.site;
@@ -35,47 +34,31 @@ export const getStaticPaths = async () => {
   };
 };
 
-const SiteFeedback = ({ initialFeedback }) => {
-  const auth = useAuth();
+const SiteFeedback = ({ initialFeedback, site }) => {
   const router = useRouter();
-  const inputEl = useRef(null);
-  const [allFeedback, setAllFeedback] = useState(initialFeedback);
-
-  const onSubmit = (event) => {
-    event.preventDefault();
-
-    const newFeedback = {
-      author: auth.user.name,
-      authorId: auth.user.uid,
-      siteId: router.query.siteId,
-      text: inputEl.current.value,
-      createdAt: new Date().toISOString(),
-      provider: auth.user.provider,
-      status: "pending",
-    };
-
-    inputEl.current.value = "";
-    setAllFeedback([newFeedback, ...allFeedback]);
-    createFeedback(newFeedback);
+  const colorMode = useTheme();
+  const textColor = {
+    light: "gray.900",
+    dark: "gray.200",
   };
+
   return (
     <Box display="flex" flexDirection="column" width="full">
-      <Box as="form" onSubmit={onSubmit}>
-        <FormControl id="comment-control" my={8}>
-          <FormLabel htmlFor="comment">Comment</FormLabel>
-          <Input ref={inputEl} type="text" id="comment" />
-          <Button mt={2} fontWeight="medium" type="submit">
-            Add comment
-          </Button>
-        </FormControl>
-      </Box>
-      {allFeedback?.map((feedback, index) => (
-        <Feedback
-          key={feedback.id}
-          isLast={index === initialFeedback.length - 1}
-          {...feedback}
-        />
-      ))}
+      <FeedbackLink paths={router?.query?.site || []} />
+      {initialFeedback?.length ? (
+        initialFeedback.map((feedback, index) => (
+          <Feedback
+            key={feedback.id}
+            settings={site?.settings}
+            isLast={index === initialFeedback.length - 1}
+            {...feedback}
+          />
+        ))
+      ) : (
+        <Text color={textColor[colorMode]}>
+          There are no comments for this site.
+        </Text>
+      )}
     </Box>
   );
 };
