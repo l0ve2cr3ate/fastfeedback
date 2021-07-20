@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 
 import Feedback from "@/components/Feedback";
 import { getAllFeedback, getAllSites, getSite } from "@/lib/db-admin";
