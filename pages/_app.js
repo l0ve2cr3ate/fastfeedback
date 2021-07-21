@@ -1,9 +1,11 @@
 import { css, Global } from "@emotion/react";
 import { DefaultSeo } from "next-seo";
-
 import { ThemeProvider, CSSReset } from "@chakra-ui/react";
+import { MDXProvider } from "@mdx-js/react";
+
 import { AuthProvider } from "@/lib/auth";
 import theme from "@/styles/theme";
+import MDXComponents from "@/components/MDXComponents";
 import SEO from "../next-seo.config";
 
 const GlobalStyle = ({ children }) => {
@@ -32,8 +34,10 @@ function MyApp({ Component, pageProps }) {
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
-        <GlobalStyle />
-        <Component {...pageProps} />
+        <MDXProvider components={MDXComponents}>
+          <GlobalStyle />
+          <Component {...pageProps} />
+        </MDXProvider>
       </AuthProvider>
     </ThemeProvider>
   );

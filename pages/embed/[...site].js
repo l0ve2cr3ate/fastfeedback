@@ -44,7 +44,7 @@ const SiteFeedback = ({ initialFeedback, site }) => {
 
   return (
     <Box display="flex" flexDirection="column" width="full">
-      <FeedbackLink paths={router?.query?.site || []} />
+      <FeedbackLink siteId={siteId} />
       {initialFeedback?.length ? (
         initialFeedback.map((feedback, index) => (
           <Feedback

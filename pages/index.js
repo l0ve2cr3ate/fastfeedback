@@ -4,24 +4,27 @@ import { useAuth } from "@/lib/auth";
 import Logo from "@/icons/logo";
 import GoogleIcon from "@/icons/google";
 import GithubIcon from "@/icons/github";
-import { getAllFeedback } from "@/lib/db-admin";
+import { getAllFeedback, getSite } from "@/lib/db-admin";
 import Feedback from "@/components/Feedback";
 import FeedbackLink from "@/components/FeedbackLink";
+import Footer from "@/components/Footer";
 
 const SITE_ID = process.env.NEXT_PUBLIC_HOME_PAGE_SITE_ID;
 
 export const getStaticProps = async (context) => {
   const { feedback } = await getAllFeedback(SITE_ID);
+  const { site } = await getSite(SITE_ID);
 
   return {
     props: {
       allFeedback: feedback,
+      site,
     },
     revalidate: 1,
   };
 };
 
-export default function Home({ allFeedback }) {
+export default function Home({ allFeedback, site }) {
   const auth = useAuth();
 
   return (
@@ -130,9 +133,15 @@ export default function Home({ allFeedback }) {
       >
         <FeedbackLink siteId={SITE_ID} />
         {allFeedback?.map((feedback, index) => (
-          <Feedback key={feedback.id} {...feedback} />
+          <Feedback
+            key={feedback.id}
+            settings={site?.settings}
+            isLast={index === allFeedback.length - 1}
+            {...feedback}
+          />
         ))}
       </Box>
+      <Footer />
     </>
   );
 }
