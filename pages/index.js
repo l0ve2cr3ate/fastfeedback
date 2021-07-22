@@ -8,6 +8,7 @@ import { getAllFeedback, getSite } from "@/lib/db-admin";
 import Feedback from "@/components/Feedback";
 import FeedbackLink from "@/components/FeedbackLink";
 import Footer from "@/components/Footer";
+import LoginButtons from "../components/LoginButtons";
 
 const SITE_ID = process.env.NEXT_PUBLIC_HOME_PAGE_SITE_ID;
 
@@ -86,39 +87,7 @@ export default function Home({ allFeedback, site }) {
               View Dashboard
             </Button>
           ) : (
-            <>
-              <Button
-                leftIcon={<GithubIcon />}
-                onClick={() => auth.signinWithGithub()}
-                backgroundColor="gray.900"
-                color="white"
-                fontWeight="medium"
-                mt={4}
-                _hover={{ bg: "gray.700" }}
-                _active={{
-                  bg: "gray.800",
-                  transform: "scale(0.95)",
-                }}
-              >
-                Continue with GitHub
-              </Button>
-              <Button
-                leftIcon={<GoogleIcon />}
-                onClick={() => auth.signinWithGoogle()}
-                backgroundColor="white"
-                color="gray.900"
-                variant="outline"
-                fontWeight="medium"
-                mt={4}
-                _hover={{ bg: "gray.100" }}
-                _active={{
-                  bg: "gray.100",
-                  transform: "scale(0.95)",
-                }}
-              >
-                Continue with Google
-              </Button>
-            </>
+            <LoginButtons />
           )}
         </Flex>
       </Box>
