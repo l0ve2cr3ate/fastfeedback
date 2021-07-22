@@ -7,10 +7,11 @@ import GithubIcon from "@/icons/github";
 const LoginButtons = () => {
   const auth = useAuth();
 
+
   return (
     <Flex direction={["column", "row"]}>
       <Button
-        onClick={() => auth.signinWithGitHub()}
+        onClick={() => auth.signinWithGithub()}
         backgroundColor="gray.900"
         color="white"
         fontWeight="medium"
