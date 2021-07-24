@@ -35,6 +35,7 @@ export const getStaticPaths = async () => {
 };
 
 const SiteFeedback = ({ initialFeedback, site }) => {
+  const router = useRouter();
   const colorMode = useTheme();
   const textColor = {
     light: "gray.900",
@@ -43,7 +44,7 @@ const SiteFeedback = ({ initialFeedback, site }) => {
 
   return (
     <Box display="flex" flexDirection="column" width="full">
-      <FeedbackLink siteId={site?.id} />
+      <FeedbackLink paths={router?.query?.site || []} />
       {initialFeedback?.length ? (
         initialFeedback.map((feedback, index) => (
           <Feedback
