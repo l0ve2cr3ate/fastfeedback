@@ -100,7 +100,7 @@ export default function Home({ allFeedback, site }) {
         mt={8}
         px={4}
       >
-        <FeedbackLink siteId={SITE_ID} />
+        <FeedbackLink paths={[SITE_ID]} />
         {allFeedback?.map((feedback, index) => (
           <Feedback
             key={feedback.id}

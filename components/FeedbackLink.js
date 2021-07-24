@@ -1,7 +1,7 @@
 import { Flex, Link } from "@chakra-ui/react";
 import { useTheme } from "@/utils/useTheme";
 
-const FeedbackLink = ({ siteId }) => {
+const FeedbackLink = ({ paths }) => {
   const colorMode = useTheme();
   const linkColor = {
     light: "gray.900",
@@ -21,7 +21,7 @@ const FeedbackLink = ({ siteId }) => {
         color={linkColor[colorMode]}
         fontWeight="bold"
         fontSize="sm"
-        href={`/site/${siteId}`}
+        href={`/site/${paths.join("/")}`}
         target="_blank"
       >
         Leave a comment →
