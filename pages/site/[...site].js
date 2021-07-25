@@ -89,6 +89,7 @@ const SiteFeedback = () => {
         isSiteOwner={site?.authorId === user?.uid}
         site={site}
         siteId={siteId}
+        route={route}
       />
       <Box
         display="flex"
